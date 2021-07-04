@@ -1,3 +1,5 @@
+# 检查方法
+
 from .strategy import MU_COMMA_LAMBDA, MU_PLUS_LAMBDA
 
 
