@@ -1,91 +1,79 @@
 from .must import must_selection_strategy
-from .utils import in_bounds
+from .utils import in_bounds, init_solution, debug
 from .strategy import MU_COMMA_LAMBDA
-from numpy import argsort
-from numpy.random import randn
-from numpy.random import rand
+from numpy import argsort, random
 
 # evolution strategy (mu, lambda) algorithm
-def _es_comma(objective, bounds, n_iter, step_size, mu, lam):
-	best, best_eval = None, 1e+10
-	# calculate the number of children per parent
-	n_children = int(lam / mu)
-	# initial population
-	population = list()
-	for _ in range(lam):
-		candidate = None
-		while candidate is None or not in_bounds(candidate, bounds):
-			candidate = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
-		population.append(candidate)
-	# perform the search
-	for epoch in range(n_iter):
-		# evaluate fitness for the population
-		scores = [objective(c) for c in population]
-		# rank scores in ascending order
-		ranks = argsort(argsort(scores))
-		# select the indexes for the top mu ranked solutions
-		selected = [i for i,_ in enumerate(ranks) if ranks[i] < mu]
-		# create children from parents
-		children = list()
-		for i in selected:
-			# check if this parent is the best solution ever seen
-			if scores[i] < best_eval:
-				best, best_eval = population[i], scores[i]
-				print('%d, Best: f(%s) = %.5f' % (epoch, best, best_eval))
-			# create children for parent
-			for _ in range(n_children):
-				child = None
-				while child is None or not in_bounds(child, bounds):
-					child = population[i] + randn(len(bounds)) * step_size
-				children.append(child)
-		# replace population with children
-		population = children
-	return [best, best_eval]
+def _es_comma(n_dimension, objective, bounds, n_iter, learn_rate, mu, lam, random_state=None):
+    rs = random.RandomState(random_state)
+    best, best_eval = None, 1e+10
+    n_children = int(lam / mu)
+    
+    population = [init_solution(rs, n_dimension, bound_lows=bounds[0], bound_highs=bounds[1]) for _ in range(lam)]
+
+    debug(population)
+
+    for epoch in range(n_iter):
+        scores = [objective(c) for c in population]
+        ranks = argsort(argsort(scores))
+        selected = [i for i, _ in enumerate(ranks) if ranks[i] < mu]
+        children = list()
+        
+        for i in selected:
+            if scores[i] < best_eval:
+                best, best_eval = population[i], scores[i]
+                debug('%d, Best: f(%s) = %.5f' % (epoch, best, best_eval))
+
+            # create children for parent
+            for _ in range(n_children):
+                child = None
+                while child is None or not in_bounds(child, bounds):
+                    child = population[i] + rs.randn(n_dimension) * learn_rate
+                
+                children.append(child)
+
+        population = children
+    return [best, best_eval]
 
 
 # evolution strategy (mu + lambda) algorithm
-def _es_plus(objective, bounds, n_iter, step_size, mu, lam):
-	best, best_eval = None, 1e+10
-	# calculate the number of children per parent
-	n_children = int(lam / mu)
-	# initial population
-	population = list()
-	for _ in range(lam):
-		candidate = None
-		while candidate is None or not in_bounds(candidate, bounds):
-			candidate = bounds[:, 0] + rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
-		population.append(candidate)
-	# perform the search
-	for epoch in range(n_iter):
-		# evaluate fitness for the population
-		scores = [objective(c) for c in population]
-		# rank scores in ascending order
-		ranks = argsort(argsort(scores))
-		# select the indexes for the top mu ranked solutions
-		selected = [i for i,_ in enumerate(ranks) if ranks[i] < mu]
-		# create children from parents
-		children = list()
-		for i in selected:
-			# check if this parent is the best solution ever seen
-			if scores[i] < best_eval:
-				best, best_eval = population[i], scores[i]
-				print('%d, Best: f(%s) = %.5f' % (epoch, best, best_eval))
-			# keep the parent
-			children.append(population[i])
-			# create children for parent
-			for _ in range(n_children):
-				child = None
-				while child is None or not in_bounds(child, bounds):
-					child = population[i] + randn(len(bounds)) * step_size
-				children.append(child)
-		# replace population with children
-		population = children
-	return [best, best_eval]
+def _es_plus(n_dimension, objective, bounds, n_iter, learn_rate, mu, lam, random_state=None):
+    rs = random.RandomState(random_state)
+    best, best_eval = None, 1e+10
+    n_children = int(lam / mu)
+
+    population = [init_solution(rs, n_dimension, bound_lows=bounds[0], bound_highs=bounds[1]) for _ in range(lam)]
+
+    debug(population)
+
+    for epoch in range(n_iter):
+        scores = [objective(c) for c in population]
+        ranks = argsort(argsort(scores))
+        selected = [i for i, _ in enumerate(ranks) if ranks[i] < mu]
+        children = list()
+
+        for i in selected:
+            if scores[i] < best_eval:
+                best, best_eval = population[i], scores[i]
+                debug('%d, Best: f(%s) = %.5f' % (epoch, best, best_eval))
+
+            # keep the parent
+            children.append(population[i])
+
+            for _ in range(n_children):
+                child = None
+                while child is None or not in_bounds(child, bounds):
+                    child = population[i] + rs.randn(n_dimension) * learn_rate
+                
+                children.append(child)
+
+        population = children
+    return [best, best_eval]
 
 
-def ES(comma_or_plus: str, objective, bounds, n_iter, step_size, mu, lam):
+def ES(comma_or_plus: str, n_dimension, objective, bounds, n_iter, learn_rate, mu, lam, random_state=None):
     must_selection_strategy(comma_or_plus)
     if comma_or_plus == MU_COMMA_LAMBDA:
-        return _es_comma(objective, bounds, n_iter, step_size, mu, lam)
+        return _es_comma(n_dimension, objective, bounds, n_iter, learn_rate, mu, lam, random_state)
     else:
-        return _es_plus(objective, bounds, n_iter, step_size, mu, lam)
+        return _es_plus(n_dimension, objective, bounds, n_iter, learn_rate, mu, lam, random_state)
