@@ -14,7 +14,3 @@ def init_solution(rs: RandomState, num_dimensions, bound_lows, bound_highs):
 
 def init_vector(rs: RandomState, n, lows, highs):
     return lows + rs.uniform(0, 1, n) * (highs - lows)
-
-def debug(*args):
-    if IS_DEBUG:
-        print(*args)

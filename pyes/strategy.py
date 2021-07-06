@@ -4,3 +4,7 @@ MU_PLUS_LAMBDA = '+'
 
 # 开发过程开关
 IS_DEBUG = True
+
+# 事件
+def EVENT_ON_GENERATION(gen, solution, current_best, history_best):
+    pass
