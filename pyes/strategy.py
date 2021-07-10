@@ -6,5 +6,5 @@ MU_PLUS_LAMBDA = '+'
 IS_DEBUG = True
 
 # 事件
-def EVENT_ON_GENERATION(gen, solution, current_best, history_best):
+def EVENT_ON_GENERATION(gen, population, current_best, history_best):
     pass

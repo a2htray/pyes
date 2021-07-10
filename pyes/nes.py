@@ -8,10 +8,18 @@ from tensorflow.contrib.distributions import MultivariateNormalFullCovariance
 from loguru import logger
 import numpy as np
 
-
 tf.logging.set_verbosity(tf.logging.ERROR)
 
-def NES(n_dimension: int, objective, n_iter, learn_rate, lam, random_state=None, event_on_genration=EVENT_ON_GENERATION):
+def NES(
+    n_dimension: int, 
+    objective, 
+    n_iter, 
+    learn_rate, 
+    lam,
+    mean,
+    sigma,
+    random_state=None, 
+    event_on_genration=EVENT_ON_GENERATION):
     logger.debug({
         'dimension': n_dimension,
         'n_iter': n_iter,
@@ -23,7 +31,7 @@ def NES(n_dimension: int, objective, n_iter, learn_rate, lam, random_state=None,
     def get_fitness(population): 
         return [-objective(solution) for solution in population]
 
-    mean = tf.Variable(tf.random_normal([n_dimension, ], 13., 1.), dtype=tf.float32)
+    mean = tf.Variable(tf.random_normal([n_dimension, ], mean, sigma), dtype=tf.float32)
     cov = tf.Variable(5. * tf.eye(n_dimension), dtype=tf.float32)
     mvn = MultivariateNormalFullCovariance(loc=mean, covariance_matrix=cov)
     make_population = mvn.sample(lam)
@@ -42,6 +50,7 @@ def NES(n_dimension: int, objective, n_iter, learn_rate, lam, random_state=None,
         population = sess.run(make_population)
 
         scores = [objective(c) for c in population]
+        
         event_on_genration(g, population, population[np.argsort(scores)[0]], best)
 
         kids_fit = get_fitness(population)

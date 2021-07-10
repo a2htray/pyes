@@ -3,6 +3,7 @@ from .objective import OBJECTIVE_FUNS
 from .es import ES
 from .cma_es import CMAES
 from .nes import NES
+from .mcc_nes import MCCNES
 
 __all__ = [
     'MU_COMMA_LAMBDA', 'MU_PLUS_LAMBDA',
@@ -10,5 +11,6 @@ __all__ = [
     'ES',
     'CMAES',
     'NES',
+    'MCCNES',
 ]
 
