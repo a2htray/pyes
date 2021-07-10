@@ -1,3 +1,18 @@
+### 示例
+
+* ES (mu,lambda) 策略
+  * [nbviewer](https://nbviewer.jupyter.org/github/a2htray/pyes/blob/main/scripts/ipynbs/es_comma.ipynb)
+  * [Github](./scripts/ipynbs/es_comma.ipynb)
+* ES (mu+lambda) 策略
+  * [nbviewer](https://nbviewer.jupyter.org/github/a2htray/pyes/blob/main/scripts/ipynbs/es_plus.ipynb)
+  * [Github](./scripts/ipynbs/es_plus.ipynb)
+
+上述示例中，唯一的不同在于 `In [4]:` 中的 `pyes.MU_COMMA_LAMBDA` 和 `pyes.MU_PLUS_LAMBDA`。 
+
+* NES
+  * [nbviewer](https://nbviewer.jupyter.org/github/a2htray/pyes/blob/main/scripts/ipynbs/nes.ipynb)
+  * [Github](./scripts/ipynbs/nes.ipynb)
+  
 ### 资料
 
 1. [维基百科 ES](https://en.wikipedia.org/wiki/Evolution_strategy)
