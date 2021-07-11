@@ -1,3 +1,10 @@
+`pyes`, Evolution Strategies Implemented within Python
+
+### 方法
+
+* ES
+* NES
+
 ### 示例
 
 * ES (mu,lambda) 策略
@@ -13,13 +20,11 @@
   * [nbviewer](https://nbviewer.jupyter.org/github/a2htray/pyes/blob/main/scripts/ipynbs/nes.ipynb)
   * [Github](./scripts/ipynbs/nes.ipynb)
 
-PS: 存在一个问题 `nbviewer` 无法加载 `scripts/nes.ipynb` 文件，建议下载该文件再进行预览。
-
 文件部分内容：
 
 `适应值曲线`
 
-![](./assets/nes-fitness-curve.png)
+<img src="./assets/nes-fitness-curve.png" style="zoom:50%;" />
 
 `种群分布图`
 
