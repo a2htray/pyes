@@ -5,13 +5,13 @@ from numpy import argsort, random, asarray
 
 # es (mu,lambda)
 def _es_comma(
-    n_dimension, 
-    objective, 
-    bounds, 
-    n_iter, 
-    learn_rate, 
-    mu, 
-    lam, 
+    n_dimension,
+    objective,
+    bounds,
+    n_iter,
+    learn_rate,
+    mu,
+    lam,
     random_state=None, event_on_generation=EVENT_ON_GENERATION):
     rs = random.RandomState(random_state)
     best, best_eval = None, 1e+10

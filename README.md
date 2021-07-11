@@ -23,9 +23,11 @@ PS: 存在一个问题 `nbviewer` 无法加载 `scripts/nes.ipynb` 文件，建�
 
 `种群分布图`
 
-![](./assets/nes-population-curve.png)
+![](./assets/nes-population-scatter.png)
 
-
+* 基于 NES 的特征选择方法`单种群`
+  * [nbviewer](https://nbviewer.jupyter.org/github/a2htray/pyes/blob/main/scripts/ipynbs/mcc_nes_for_fs_single.ipynb)
+  * [Github](./scripts/ipynbs/mcc_nes_for_fs_single.ipynb)
 
 ### 资料
 

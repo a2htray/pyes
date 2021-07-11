@@ -18,6 +18,7 @@ def NES(
     lam,
     mean,
     sigma,
+    cov,
     random_state=None, 
     event_on_genration=EVENT_ON_GENERATION):
     logger.debug({
@@ -32,11 +33,10 @@ def NES(
         return [-objective(solution) for solution in population]
 
     mean = tf.Variable(tf.random_normal([n_dimension, ], mean, sigma), dtype=tf.float32)
-    cov = tf.Variable(5. * tf.eye(n_dimension), dtype=tf.float32)
+    cov = tf.Variable(cov, dtype=tf.float32)
     mvn = MultivariateNormalFullCovariance(loc=mean, covariance_matrix=cov)
     make_population = mvn.sample(lam)
 
-    # compute gradient and update mean and covariance matrix from sample and fitness
     fitness_input = tf.placeholder(tf.float32, [lam, ])
     prob_output = tf.placeholder(tf.float32, [lam, n_dimension])
     loss = -tf.reduce_mean(mvn.log_prob(prob_output)*fitness_input)         # log prob * fitness
@@ -53,8 +53,8 @@ def NES(
         
         event_on_genration(g, population, population[np.argsort(scores)[0]], best)
 
-        kids_fit = get_fitness(population)
-        sess.run(train_op, {fitness_input: kids_fit, prob_output: population}) 
+        fitness_values = get_fitness(population)
+        sess.run(train_op, {fitness_input: fitness_values, prob_output: population}) 
 
         for i, score in enumerate([objective(x) for x in population]):
             if score < best_fitness:
